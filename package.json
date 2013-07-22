@@ -1,0 +1,26 @@
+{
+  "name": "codle",
+  "version": "0.0.5",
+  "description": "code for kindle",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:flynngao/codle.git"
+  },
+  "keywords": [
+    "code",
+    "kindle"
+  ],
+  "author": "flynngao",
+  "license": "BSD",
+  "dependencies":{
+   "colorful":"*",
+   "commander":"*"	
+  },
+  "bin":{
+    "codle":"./bin/codle"
+  }
+}
