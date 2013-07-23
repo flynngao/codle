@@ -1,6 +1,6 @@
 {
   "name": "codle",
-  "version": "0.0.5",
+  "version": "0.0.8",
   "description": "code for kindle",
   "main": "index.js",
   "scripts": {
@@ -17,8 +17,12 @@
   "author": "flynngao",
   "license": "BSD",
   "dependencies":{
-   "colorful":"*",
-   "commander":"*"	
+  
+   "fl-optimist":"*",
+   "cli-color":"*",
+   "nodemailer":"*",	
+   "pdfkit":"*",
+   "walk":"*"
   },
   "bin":{
     "codle":"./bin/codle"

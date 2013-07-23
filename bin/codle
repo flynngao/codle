@@ -1,22 +1,132 @@
 #!/usr/bin/env node
 
 
-var program = require('commander');
+var argv = require('fl-optimist').argv;
+var exec = require('child_process').exec;
+var color = require('cli-color');
+var fs = require('fs');
+var pdfkit = require('pdfkit');
+var walk = require('walk');
+var push = require('./push');
 
-program
-  .option('-f, --force', 'force installation')
-  .parse(process.argv);
+var walkOptions = {
+    followLinks: false,
+    filters: [".git/", "node_modules/"]
+};
 
-var pkgs = program.args;
+if (argv._[0] == "config"){
 
-if (!pkgs.length) {
-  console.error('packages required');
-  process.exit(1);
+
+    var regex = /^[_a-zA-Z0-9\'-]+(\.[_a-zA-Z0-9\'-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.(([0-9]{1,3})|([a-zA-Z]{2,3})|(name))$/;
+    var userconfig = JSON.parse(fs.readFileSync('bin/.user-config.json'));
+    // push address config
+    if(argv.u && regex.test(argv.u) && argv.p){
+        userconfig.email = argv.u;
+        userconfig.pass = argv.p;
+        if(typeof(userconfig) == 'object'){
+        fs.writeFile('bin/.user-config.json',JSON.stringify(userconfig),function(err){
+            if(err) throw err;
+            console.log('Your push adress:' + color.cyanBright(argv.u));
+        })
+        }
+    }
+    // kindle address config
+    if(argv.k&&regex.test(argv.k)){
+        userconfig.kindle = argv.k;
+        fs.writeFile('bin/.user-config.json',JSON.stringify(userconfig),function(){
+            console.log('Your kindle adress:' + color.cyanBright(argv.k));
+        });
+    } else{
+        console.log(color.red('Lack of Params or Not a real Email adress'));
+    }
+
+    
+
+    
 }
 
-console.log();
-if (program.force) console.log('  force: install');
-pkgs.forEach(function(pkg){
-  console.log('  install : %s', pkg);
-});
-console.log();
+// kindle address config
+
+
+// push
+if (argv._[0] == "push") {
+
+    if(argv.g){
+        exec('git clone ' + argv.g, function(error, stdout, stderr) {
+
+        // get repo name
+        var repo = argv._[1].split('/')
+        repo = repo[repo.length - 1].split('.')[0];
+
+        console.log('stdout: ' + color.cyanBright(stdout));
+        if (error !== null) {
+            console.log('exec error: ' + error);
+            return;
+        }
+
+        // walk
+        walker = walk.walk('./' + repo, walkOptions);
+        var pdf = new pdfkit;
+        walker.on('file', function(root, fileStats, next) {
+
+            fs.readFile(root + '/' + fileStats.name, function(err, data) {
+                var page = data.toString().split('\n') 
+                for(var line in page){
+                    pdf.text(page[line]);
+                }
+                
+                pdf.addPage();
+                next();
+            })
+
+        });
+
+        walker.on("end", function() {
+            console.log(color.greenBright("pdf done"));
+            pdf.write(repo + '.pdf');
+
+
+            // push.push(repo,repo,'flynn.gao.y@kindle£.com',function(){
+            //     console.log(color.greenBright('all done'));
+            // });    
+        });
+
+        
+
+        });
+    }
+    else if(argv.d){
+
+        walker = walk.walk(argv.d);
+        walker.on('file', function(root, fileStats, next) {
+
+            
+                push.push(root,fileStats.name,function(){
+                    console.log(color.greenBright(root+'/'+fileStats.name+' done'));
+                }); 
+                next();
+        
+
+        });
+
+        walker.on("end", function() {
+                console.log(color.greenBright('all done'));
+                return;
+        });
+    }
+    else if(argv.f){
+         var name = argv.f.split('/');
+         name = name[name.length - 1];
+         push.push(argv.f,name,function(){
+             console.log(color.greenBright('all done'));
+             return false;
+         });    
+    }
+    else {
+        console.log(color.red('Error:') + 'Empty git address');
+        return false;
+    }
+
+
+} 
+
