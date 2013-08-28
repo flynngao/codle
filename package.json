@@ -1,6 +1,6 @@
 {
   "name": "codle",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "code for kindle",
   "main": "index.js",
   "scripts": {
@@ -21,8 +21,6 @@
    "fl-optimist":"*",
    "cli-color":"*",
    "nodemailer":"*",	
-   // "pdfkit":"*",
-   // "walk":"*",
    "underscore":"*"
   },
   "bin":{
