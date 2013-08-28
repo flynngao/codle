@@ -21,8 +21,9 @@
    "fl-optimist":"*",
    "cli-color":"*",
    "nodemailer":"*",	
-   "pdfkit":"*",
-   "walk":"*"
+   // "pdfkit":"*",
+   // "walk":"*",
+   "underscore":"*"
   },
   "bin":{
     "codle":"./bin/codle"

@@ -6,19 +6,14 @@
 
 ### config Your Email & kindle
 
-    codle config -u your-email -p passw -k kindle
-    
-### config Your Kindle
-
-    codle -k kindle-email 
+    codle config  your-email  passw  kindle 
 
 ### codle push 
 
-    codle push -g git-address
-
-    codle push -d documents
-
-    codle push -f sigle file path
+    codle  document1 document2
 
 ### TODO
+	
+	codle  git-address
 
+	codle  svn-address
